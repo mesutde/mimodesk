@@ -139,12 +139,6 @@ AnyDesk-style “open ID here, connect from anywhere” is supported. Host app m
 
 ## FAQ / SSS
 
-**Q: Do you upload my ID, API keys, or machine secrets to GitHub?**  
-A: No. The repo has source code only. Your device identity is generated locally at `%APPDATA%\MimoDesk\identity.key` (Windows) and is never part of this repository.
-
-**Q: Siz kimlik/API key bilgisayar anahtarımı GitHub’a yüklediniz mi?**  
-A: Hayır. Depoda yalnızca kaynak kod var. Cihaz kimliğin uygulama ilk açıldığında **kendi bilgisayarında** üretilir (`%APPDATA%\MimoDesk\identity.key`) ve repoya girmez.
-
 **Q: Is a server or account required?**  
 A: No account, no VPS. Iroh’s public relay is only a fallback for NAT traversal.
 
