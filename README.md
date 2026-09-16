@@ -105,6 +105,69 @@ Her iki makinede de **aynı sürüm** olmalı; host uygulaması açık kalmalı.
 
 ---
 
+## LAN only or the internet? / Sadece LAN mı, internet de olur mu?
+
+**Both.** MimoDesk is not LAN-only. It uses **Iroh** (QUIC + hole punch). Direct P2P when possible; if both sides are behind strict NAT/firewall, traffic can fall back to Iroh’s **public relay**. You do **not** need your own VPS.
+
+| Scenario | Works? |
+|----------|--------|
+| Same Wi‑Fi / LAN (home, office) | Yes — usually direct P2P |
+| Different city / different ISPs (WAN) | **Yes** — hole punch, else public relay |
+| Both behind strict NAT | Usually yes via relay |
+| Fully offline LAN (no internet) | Yes (local discovery) |
+
+```text
+PC A (host) ──hole punch──► PC B (client)     // best path
+     │                              ▲
+     └──── Iroh public relay ───────┘          // fallback if punch fails
+```
+
+AnyDesk-style “open ID here, connect from anywhere” is supported. Host app must stay running on the controlled PC.
+
+### Türkçe
+
+**Sadece LAN değil — uzak bilgisayarlar da çalışır.** Iroh ile önce doğrudan P2P denenir; NAT/firewall sertse genel relay kullanılır. Kendi sunucu/VPS gerekmez.
+
+| Durum | Çalışır mı? |
+|-------|-------------|
+| Aynı ev/ofis, aynı Wi‑Fi | Evet |
+| Farklı şehir / farklı internet | **Evet** |
+| Her ikisi de sıkı NAT arkasında | Genelde evet (relay) |
+| Internetsiz yerel ağ | Evet |
+
+---
+
+## FAQ / SSS
+
+**Q: Do you upload my ID, API keys, or machine secrets to GitHub?**  
+A: No. The repo has source code only. Your device identity is generated locally at `%APPDATA%\MimoDesk\identity.key` (Windows) and is never part of this repository.
+
+**Q: Siz kimlik/API key bilgisayar anahtarımı GitHub’a yüklediniz mi?**  
+A: Hayır. Depoda yalnızca kaynak kod var. Cihaz kimliğin uygulama ilk açıldığında **kendi bilgisayarında** üretilir (`%APPDATA%\MimoDesk\identity.key`) ve repoya girmez.
+
+**Q: Is a server or account required?**  
+A: No account, no VPS. Iroh’s public relay is only a fallback for NAT traversal.
+
+**Q: Sunucu veya hesap gerekli mi?**  
+A: Hesap yok, VPS yok. Genel relay yalnızca NAT aşımında yedek yoldur.
+
+**Q: Does it work between two PCs on the internet?**  
+A: Yes — see the LAN/WAN table above.
+
+**Q: İnternetten iki PC arasında çalışır mı?**  
+A: Evet — yukarıdaki tabloya bak.
+
+**Q: Why not a website / browser client?**  
+A: Screen capture and input injection must run as native code on the host. A web client would need a different design (e.g. WebRTC agent).
+
+**Q: Neden web sitesi yok?**  
+A: Ekran yakalama ve girdi enjeksiyonu host’ta native kod ister; tarayıcı istemcisi ayrı mimari olurdu.
+
+**Q: Who wrote this?**  
+A: Built with **Xiaomi MiMo Developers — MiMo-X Pro**.
+
+---
+
 ## Build from source
 
 ```powershell
