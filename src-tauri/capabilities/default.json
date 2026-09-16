@@ -1,0 +1,20 @@
+{
+  "identifier": "default",
+  "description": "MimoDesk default capability",
+  "windows": ["main", "remote-session", "file-transfer"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-create",
+    "core:window:allow-destroy",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-focus",
+    "core:window:allow-maximize",
+    "core:window:allow-unmaximize",
+    "core:window:allow-is-maximized",
+    "core:window:allow-close",
+    "core:webview:allow-create-webview-window",
+    "shell:allow-open",
+    "store:default",
+    "dialog:default"
+  ]
+}

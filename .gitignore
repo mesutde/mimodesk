@@ -1,0 +1,10 @@
+node_modules
+dist
+src-tauri/target
+src-tauri/gen
+.github-upload
+github-upload
+.peerdesk
+*.log
+tsconfig.tsbuildinfo
+src-tauri/WixTools
