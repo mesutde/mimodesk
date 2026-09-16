@@ -61,6 +61,24 @@ jobs:
             wget \
             file
 
+      - name: Generate macOS icon.icns
+        if: matrix.platform == 'macos-latest'
+        run: |
+          set -e
+          SRC="src-tauri/icons/128x128@2x.png"
+          OUT="src-tauri/icons/icon.icns"
+          SET="src-tauri/icons/icon.iconset"
+          rm -rf "$SET"
+          mkdir -p "$SET"
+          for size in 16 32 64 128 256 512; do
+            sips -z $size $size "$SRC" --out "$SET/icon_${size}x${size}.png" >/dev/null
+            double=$((size * 2))
+            sips -z $double $double "$SRC" --out "$SET/icon_${size}x${size}@2x.png" >/dev/null
+          done
+          iconutil -c icns "$SET" --out "$OUT"
+          rm -rf "$SET"
+          test -f "$OUT"
+
       - name: Install frontend deps
         run: npm ci
 
