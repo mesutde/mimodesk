@@ -4,15 +4,28 @@ Sunucusuz (VPS’siz) P2P uzak masaüstü. **Bağlanılan bilgisayar host sunucu
 
 ## İndir
 
-Windows build’leri **[Releases](https://github.com/mesutde/mimodesk/releases)** sayfasında:
+Windows / Linux / macOS build’leri **[Releases](https://github.com/mesutde/mimodesk/releases)** sayfasında:
 
-| Asset | Açıklama |
-|-------|----------|
-| `mimodesk.exe` | Taşınabilir — kurulumsuz çalışır |
-| `MimoDesk_*_x64-setup.exe` | NSIS kurulum |
-| `MimoDesk_*_x64_en-US.msi` | MSI kurulum |
+| Platform | Artifact |
+|----------|----------|
+| Windows | `mimodesk.exe`, `-setup.exe`, `.msi` |
+| Linux | `.AppImage`, `.deb` |
+| macOS | `.dmg`, `.app.tar.gz` |
 
-Host ve client aynı sürümü kullanmalı.
+Host ve client aynı sürümü (ve aynı OS paketini) kullanmalı.
+
+> **Web?** Bu uygulama tarayıcıda çalışmaz. Ekran yakalama + girdi enjeksiyonu host makinede native kod ister; Tauri masaüstü içindir. Web istemcisi ayrı bir mimari olurdu (WebRTC vb.).
+
+## Çok platformlu build (CI)
+
+Etiket push edince GitHub Actions otomatik derler:
+
+```powershell
+git tag v0.2.1
+git push origin v0.2.1
+```
+
+Workflow: `.github/workflows/release.yml`
 
 ## Mimari
 
