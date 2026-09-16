@@ -1,24 +1,134 @@
 # MimoDesk (PeerDesk)
 
-Sunucusuz (VPS’siz) P2P uzak masaüstü. **Bağlanılan bilgisayar host sunucudur**; merkezi app sunucusu yoktur.
+**Serverless P2P remote desktop.** No VPS, no account, no cloud control plane — the PC you connect to *is* the host. Built with **Xiaomi MiMo Developers — MiMo-X Pro**.
 
-## İndir
+> Kısa özet: AnyDesk/RustDesk gibi “ID ile bağlan”, ama merkezi sunucu yok. Iroh (QUIC + hole punch) ile doğrudan veya public relay üzerinden eşler arası.
 
-Windows / Linux / macOS build’leri **[Releases](https://github.com/mesutde/mimodesk/releases)** sayfasında:
+---
 
-| Platform | Artifact |
-|----------|----------|
-| Windows | `mimodesk.exe`, `-setup.exe`, `.msi` |
-| Linux | `.AppImage`, `.deb` |
-| macOS | `.dmg`, `.app.tar.gz` |
+## English — what & when
 
-Host ve client aynı sürümü (ve aynı OS paketini) kullanmalı.
+**MimoDesk** is a lightweight remote-control app: share a short ID, the other side connects, sees your screen, and drives mouse/keyboard. Video is JPEG over an encrypted Iroh session. Multi-monitor switch is live.
 
-> **Web?** Bu uygulama tarayıcıda çalışmaz. Ekran yakalama + girdi enjeksiyonu host makinede native kod ister; Tauri masaüstü içindir. Web istemcisi ayrı bir mimari olurdu (WebRTC vb.).
+### When to use RustDesk / AnyDesk
 
-## Çok platformlu build (CI)
+| Situation | Prefer |
+|-----------|--------|
+| Corporate fleet, SSO, audit logs, address book | **AnyDesk / RustDesk (server)** |
+| Need a public always-on rendezvous + web console | **AnyDesk / RustDesk** |
+| Mobile clients (iOS/Android) required | **AnyDesk / RustDesk** |
+| Billing, support desk, unattended mass deploy | **AnyDesk / RustDesk** |
 
-Etiket push edince GitHub Actions otomatik derler:
+### When to use MimoDesk
+
+| Situation | Prefer |
+|-----------|--------|
+| You control two PCs and want **no third-party account** | **MimoDesk** |
+| LAN or same-network quick help | **MimoDesk** |
+| Don’t want to run/maintain `hbbs`/`hbbr` or buy a VPS | **MimoDesk** |
+| Privacy-first: traffic stays P2P (relay only if hole punch fails) | **MimoDesk** |
+| Simple Windows↔Windows (and Linux/macOS builds via CI) | **MimoDesk** |
+| Experimenting / self-host-free P2P desktop | **MimoDesk** |
+
+### Feature comparison
+
+| | **MimoDesk** | **RustDesk** | **AnyDesk** |
+|--|--------------|--------------|-------------|
+| Central server required | No (Iroh public relay optional) | Optional (self-host or public) | Yes (vendor) |
+| Account / login | No | Optional | Yes (teams) |
+| Connect by | Short ID + optional password | ID + password | ID / alias |
+| Protocol | Iroh QUIC (P2P) | Custom + optional relay | Proprietary |
+| Multi-monitor switch | Yes (live, auto-revert) | Yes | Yes |
+| File transfer | Yes (basic) | Yes | Yes |
+| Clipboard | Both ways | Both ways | Both ways |
+| Web browser client | No | Limited | Yes |
+| Mobile apps | No | Yes | Yes |
+| Open source | Yes (this repo) | Yes | No |
+| Best for | Personal / LAN / no-account | Self-host & teams | Enterprise support |
+
+---
+
+## Türkçe — ne zaman hangisi?
+
+**MimoDesk**, iki bilgisayar arasında hesapsız, sunucusuz uzak masaüstüdür. Kısa bir ID paylaşırsın; karşı taraf bağlanır, ekranı görür, fare/klavye kullanır.
+
+### RustDesk / AnyDesk ne zaman daha iyi?
+
+- Kurumsal filo, denetim kaydı, adres defteri, SSO gerekiyorsa  
+- iOS/Android istemci şartsa  
+- 7/24 herkesin bağlanabileceği genel sunucu + web panel istiyorsan  
+- Destek masası / faturalı ticari kullanım ise  
+
+### MimoDesk ne zaman daha iyi?
+
+- Kendi iki bilgisayarın; **hiçbir üçüncü tarafa hesap** açmak istemiyorsan  
+- Aynı ağda (LAN) hızlı yardım  
+- RustDesk sunucusu (`hbbs`/`hbbr`) kurmak veya VPS kiralamak istemiyorsan  
+- Mümkün olduğunca trafiğin P2P kalmasını istiyorsan  
+- Basit, açık kaynak, denemelik/kişisel kullanım  
+
+### Farklar (özet tablo)
+
+| | **MimoDesk** | **RustDesk** | **AnyDesk** |
+|--|--------------|--------------|-------------|
+| Merkezi sunucu | Yok | İsteğe bağlı | Var (üretici) |
+| Hesap | Gerekmez | İsteğe bağlı | Gerekir |
+| Bağlantı | ID + şifre | ID + şifre | ID |
+| Çoklu monitör | Var | Var | Var |
+| Dosya / pano | Var | Var | Var |
+| Web / mobil | Yok | Kısmen / var | Var |
+| Açık kaynak | Evet | Evet | Hayır |
+
+---
+
+## How to use / Nasıl kullanılır
+
+### English example
+
+1. **Host PC** (the one you want to control): open MimoDesk → **Start host** → note the short ID (e.g. `482-910-3756`). Set a password if you want.
+2. **Client PC**: open MimoDesk → enter the host ID → **Connect**.
+3. Host accepts the incoming request (or enable always-allow).
+4. Remote window opens: click the screen to send mouse/keyboard. Use **Monitor 1 / 2** to switch displays. **Fit** / **1:1** change scaling. Drop a file to send it.
+5. **Cut** ends the session.
+
+Same version on both sides. Both machines should stay awake; host must be running.
+
+### Türkçe örnek
+
+1. **Yönetilecek bilgisayar (host):** MimoDesk’i aç → **Sunucuyu başlat** → kısa ID’yi not et (ör. `482-910-3756`). İstersen şifre koy.
+2. **Kontrol eden bilgisayar:** MimoDesk’i aç → host ID’sini yaz → **Bağlan**.
+3. Gelen bağlantıyı host’ta **İzin ver** (veya “her zaman izin ver”).
+4. Uzak masaüstü penceresi açılır: ekrana tıklayınca fare/klavye karşı tarafa gider. **Monitör 1 / 2** ile ekran değiştir. **Sığdır** / **1:1** ölçek. Dosyayı sürükleyip bırakarak gönder.
+5. **Kes** ile oturumu bitir.
+
+Her iki makinede de **aynı sürüm** olmalı; host uygulaması açık kalmalı.
+
+---
+
+## Build from source
+
+```powershell
+npm install
+
+# UI only (browser mock)
+npm run dev
+
+# Full Tauri app
+npm run tauri:dev
+
+# Release — must use tauri CLI (embeds UI; bare cargo build is not enough)
+npm run tauri:build
+```
+
+Outputs:
+
+- `src-tauri/target/release/mimodesk.exe`
+- `src-tauri/target/release/bundle/nsis/`
+- `src-tauri/target/release/bundle/msi/`
+
+### Multi-platform CI
+
+Push a version tag; GitHub Actions builds **Windows, Linux, macOS**:
 
 ```powershell
 git tag v0.2.1
@@ -27,47 +137,31 @@ git push origin v0.2.1
 
 Workflow: `.github/workflows/release.yml`
 
-## Mimari
+### Web?
 
-- **Tauri 2** masaüstü kabuğu (React UI)
-- **Iroh** QUIC + hole punch + public relay fallback
-- Eşleşme: kısa ID (AnyDesk gibi)
-- Ekran yakalama: xcap + JPEG
-- Girdi: enigo (SendInput)
-- Çoklu monitör: canlı geçiş, otomatik geri dönüş
+Not supported as a website. Screen capture + input injection need native code on the host. A browser client would be a different architecture (e.g. WebRTC agent + web viewer).
 
-## Geliştirme
+---
 
-```powershell
-npm install
+## Architecture
 
-# sadece UI (browser mock)
-npm run dev
+- **Tauri 2** desktop shell (React UI)
+- **Iroh** QUIC — hole punch + public relay fallback
+- Capture: `xcap` + JPEG · Input: `enigo`
+- Multi-monitor: live switch, auto-revert on capture failure
+- ALPN: `mimodesk/control/0`
 
-# tam Tauri + Iroh
-npm run tauri:dev
-
-# release build (custom-protocol ile — bare cargo build YETMEZ)
-npm run tauri:build
-```
-
-Release çıktısı:
-
-- `src-tauri/target/release/mimodesk.exe`
-- `src-tauri/target/release/bundle/nsis/`
-- `src-tauri/target/release/bundle/msi/`
-
-## Dizin yapısı
+## Layout
 
 ```
-peerdesk/
-  src/                 # React UI
-  src-tauri/src/       # Rust: p2p, capture, input, clipboard
-  dist/                # vite build (git’te yok)
+src/                 # React UI
+src-tauri/src/       # Rust: p2p, capture, input, clipboard
 ```
 
-## Notlar
+## Credits
 
-- Çoklu monitör: uzak pencere araç çubuğundan **Monitör 1 / 2** seçin.
-- Geçiş başarısızsa host otomatik son başarılı ekrana döner.
-- `cargo build --release` tek başına UI’ı gömmez; `npm run tauri:build` kullanın.
+Written with **Xiaomi MiMo Developers — MiMo-X Pro** model.
+
+## License
+
+MIT
